@@ -24,7 +24,7 @@ func main() {
 		posts := v1.Group("/posts")
 		{
 			posts.GET("/")
-			posts.GET("/:id")
+			posts.GET("/:id", ginPost.GetPostById(db))
 			posts.POST("/", ginPost.CreatePost(db))
 			posts.PATCH("/:id")
 			posts.DELETE("/:id")
