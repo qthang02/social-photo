@@ -26,3 +26,11 @@ type PostCreation struct {
 func (PostCreation) TableName() string {
 	return Post{}.TableName()
 }
+
+type PostUpdate struct {
+	Caption *string `json:"caption"`
+}
+
+func (PostUpdate) TableName() string {
+	return Post{}.TableName()
+}
