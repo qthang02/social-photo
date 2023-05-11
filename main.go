@@ -27,7 +27,7 @@ func main() {
 			posts.GET("/:id", ginPost.GetPostById(db))
 			posts.POST("/", ginPost.CreatePost(db))
 			posts.PATCH("/:id", ginPost.UpdatePost(db))
-			posts.DELETE("/:id")
+			posts.DELETE("/:id", ginPost.DeletePostById(db))
 		}
 	}
 

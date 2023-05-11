@@ -18,7 +18,7 @@ func NewUpdatePostBiz(store UpdatePostStorage) *updatePostBiz {
 	return &updatePostBiz{store: store}
 }
 
-func (biz updatePostBiz) UpdatePostById(ctx context.Context, id int, dataUpdate *model.PostUpdate) error {
+func (biz *updatePostBiz) UpdatePostById(ctx context.Context, id int, dataUpdate *model.PostUpdate) error {
 	_, err := biz.store.GetPost(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
