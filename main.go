@@ -23,7 +23,7 @@ func main() {
 	{
 		posts := v1.Group("/posts")
 		{
-			posts.GET("/")
+			posts.GET("/", ginPost.ListPost(db))
 			posts.GET("/:id", ginPost.GetPostById(db))
 			posts.POST("/", ginPost.CreatePost(db))
 			posts.PATCH("/:id", ginPost.UpdatePost(db))
