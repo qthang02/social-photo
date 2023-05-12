@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"time"
+	"social-photo/common"
 )
 
 var (
@@ -10,10 +10,8 @@ var (
 )
 
 type Post struct {
-	Id        int        `json:"id" gorm:"column:id;"`
-	Caption   string     `json:"caption" gorm:"column:caption;"`
-	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at;"`
-	UpdatedAt *time.Time `json:"updated_at" gorm:"column:updated_at;"`
+	common.SQLModel
+	Caption string `json:"caption" gorm:"column:caption;"`
 }
 
 func (Post) TableName() string { return "posts" }

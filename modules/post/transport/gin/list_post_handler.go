@@ -36,9 +36,6 @@ func ListPost(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data":   data,
-			"paging": paging,
-		})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(data, paging, nil))
 	}
 }

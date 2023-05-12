@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
+	"social-photo/common"
 	"social-photo/modules/post/biz"
 	"social-photo/modules/post/model"
 	"social-photo/modules/post/storage"
@@ -43,8 +44,6 @@ func UpdatePost(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"data": true,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
