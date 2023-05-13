@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"social-photo/common"
 	"social-photo/modules/post/model"
 	"strings"
 )
@@ -27,7 +28,7 @@ func (biz *createPostBiz) CreateNewPost(ctx context.Context, data *model.PostCre
 	}
 
 	if err := biz.store.CreatePost(ctx, data); err != nil {
-		return err
+		return common.ErrCannotCreateEntity(model.EntityName, err)
 	}
 
 	return nil

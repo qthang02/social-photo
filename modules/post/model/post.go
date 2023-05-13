@@ -5,6 +5,10 @@ import (
 	"social-photo/common"
 )
 
+const (
+	EntityName = "Post"
+)
+
 var (
 	ErrCaptionIsBlank = errors.New("Caption is blank")
 )

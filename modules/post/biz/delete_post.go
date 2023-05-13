@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"social-photo/common"
 	"social-photo/modules/post/model"
 )
 
@@ -22,11 +23,15 @@ func (biz *deletePostBiz) DeletePostById(ctx context.Context, id int) error {
 	_, err := biz.store.GetPost(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
-		return err
+		if err == common.RecordNotFound {
+			return common.ErrEntityNotFound(model.EntityName, err)
+		}
+
+		return common.ErrCannotDeleteEntity(model.EntityName, err)
 	}
 
 	if err := biz.store.DeletePost(ctx, map[string]interface{}{"id": id}); err != nil {
-		return err
+		return common.ErrCannotDeleteEntity(model.EntityName, err)
 	}
 
 	return nil

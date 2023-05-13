@@ -15,9 +15,7 @@ func CreatePost(db *gorm.DB) func(*gin.Context) {
 		var data model.PostCreation
 
 		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
 
 			return
 		}
@@ -26,9 +24,7 @@ func CreatePost(db *gorm.DB) func(*gin.Context) {
 		business := biz.NewCreatePostBiz(store)
 
 		if err := business.CreateNewPost(c.Request.Context(), &data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(http.StatusBadRequest, err)
 
 			return
 		}

@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
+	"social-photo/middleware"
 	ginPost "social-photo/modules/post/transport/gin"
 )
 
@@ -18,6 +19,7 @@ func main() {
 	}
 
 	r := gin.Default()
+	r.Use(middleware.Recovery())
 
 	v1 := r.Group("/v1")
 	{

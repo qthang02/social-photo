@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"social-photo/common"
 	"social-photo/modules/post/model"
 )
 
@@ -20,7 +21,7 @@ func NewGetPostBiz(store GetPostStorage) *getPostBiz {
 func (biz *getPostBiz) GetPostById(ctx context.Context, id int) (*model.Post, error) {
 	data, err := biz.store.GetPost(ctx, map[string]interface{}{"id": id})
 	if err != nil {
-		return nil, err
+		return nil, common.ErrCannotGetEntity(model.EntityName, err)
 	}
 
 	return data, nil

@@ -22,7 +22,7 @@ func (biz *listPostBiz) ListPostBiz(ctx context.Context, paging *common.Paging) 
 	data, err := biz.store.ListPost(ctx, paging)
 
 	if err != nil {
-		return nil, err
+		return nil, common.ErrCannotListEntity(model.EntityName, err)
 	}
 
 	return data, nil

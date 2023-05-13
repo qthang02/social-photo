@@ -14,9 +14,7 @@ func ListPost(db *gorm.DB) func(*gin.Context) {
 		var paging common.Paging
 
 		if err := c.ShouldBind(&paging); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err,
-			})
+			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
 
 			return
 		}
@@ -29,9 +27,7 @@ func ListPost(db *gorm.DB) func(*gin.Context) {
 		data, err := business.ListPostBiz(c.Request.Context(), &paging)
 
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err,
-			})
+			c.JSON(http.StatusBadRequest, err)
 
 			return
 		}

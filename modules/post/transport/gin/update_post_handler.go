@@ -16,9 +16,7 @@ func UpdatePost(db *gorm.DB) func(*gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 
 		if err != nil {
-			c.JSON(http.StatusBadGateway, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(http.StatusBadGateway, common.ErrInvalidRequest(err))
 
 			return
 		}
@@ -26,9 +24,7 @@ func UpdatePost(db *gorm.DB) func(*gin.Context) {
 		var data model.PostUpdate
 
 		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadGateway, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(http.StatusBadGateway, common.ErrInvalidRequest(err))
 
 			return
 		}
@@ -37,9 +33,7 @@ func UpdatePost(db *gorm.DB) func(*gin.Context) {
 		business := biz.NewUpdatePostBiz(store)
 
 		if err := business.UpdatePostById(c.Request.Context(), id, &data); err != nil {
-			c.JSON(http.StatusBadGateway, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(http.StatusBadGateway, err)
 
 			return
 		}

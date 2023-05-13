@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"social-photo/common"
 	"social-photo/modules/post/model"
 )
 
@@ -22,11 +23,15 @@ func (biz *updatePostBiz) UpdatePostById(ctx context.Context, id int, dataUpdate
 	_, err := biz.store.GetPost(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
-		return err
+		if err == common.RecordNotFound {
+			return common.ErrEntityNotFound(model.EntityName, err)
+		}
+
+		return common.ErrCannotUpdateEntity(model.EntityName, err)
 	}
 
 	if err := biz.store.UpdatePost(ctx, map[string]interface{}{"id": id}, dataUpdate); err != nil {
-		return err
+		return common.ErrCannotUpdateEntity(model.EntityName, err)
 	}
 
 	return nil

@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"social-photo/common"
 	"social-photo/modules/post/model"
 )
 
@@ -9,7 +10,7 @@ func (s *sqlStore) GetPost(ctx context.Context, cond map[string]interface{}) (*m
 	var data model.Post
 
 	if err := s.db.Where(cond).First(&data).Error; err != nil {
-		return nil, err
+		return nil, common.ErrDB(err)
 	}
 
 	return &data, nil
