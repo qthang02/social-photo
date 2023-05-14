@@ -8,6 +8,7 @@ import (
 	"os"
 	"social-photo/middleware"
 	ginPost "social-photo/modules/post/transport/gin"
+	ginUser "social-photo/modules/user/transport/gin"
 )
 
 func main() {
@@ -23,6 +24,8 @@ func main() {
 
 	v1 := r.Group("/v1")
 	{
+		v1.POST("register", ginUser.Register(db))
+
 		posts := v1.Group("/posts")
 		{
 			posts.GET("/", ginPost.ListPost(db))
