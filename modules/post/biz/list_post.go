@@ -11,15 +11,18 @@ type ListPostStorage interface {
 }
 
 type listPostBiz struct {
-	store ListPostStorage
+	store     ListPostStorage
+	requester common.Requester
 }
 
-func NewListPostBiz(store ListPostStorage) *listPostBiz {
-	return &listPostBiz{store: store}
+func NewListPostBiz(store ListPostStorage, requester common.Requester) *listPostBiz {
+	return &listPostBiz{store: store, requester: requester}
 }
 
 func (biz *listPostBiz) ListPostBiz(ctx context.Context, paging *common.Paging) ([]model.Post, error) {
-	data, err := biz.store.ListPost(ctx, paging)
+	ctxStore := context.WithValue(ctx, common.CurrentUser, biz.requester)
+
+	data, err := biz.store.ListPost(ctxStore, paging)
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(model.EntityName, err)

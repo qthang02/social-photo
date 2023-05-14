@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"errors"
 	"social-photo/common"
 	"social-photo/modules/post/model"
 )
@@ -12,15 +13,16 @@ type UpdatePostStorage interface {
 }
 
 type updatePostBiz struct {
-	store UpdatePostStorage
+	store     UpdatePostStorage
+	requester common.Requester
 }
 
-func NewUpdatePostBiz(store UpdatePostStorage) *updatePostBiz {
-	return &updatePostBiz{store: store}
+func NewUpdatePostBiz(store UpdatePostStorage, requester common.Requester) *updatePostBiz {
+	return &updatePostBiz{store: store, requester: requester}
 }
 
 func (biz *updatePostBiz) UpdatePostById(ctx context.Context, id int, dataUpdate *model.PostUpdate) error {
-	_, err := biz.store.GetPost(ctx, map[string]interface{}{"id": id})
+	data, err := biz.store.GetPost(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err == common.RecordNotFound {
@@ -28,6 +30,12 @@ func (biz *updatePostBiz) UpdatePostById(ctx context.Context, id int, dataUpdate
 		}
 
 		return common.ErrCannotUpdateEntity(model.EntityName, err)
+	}
+
+	isOwner := biz.requester.GetUserId() == data.UserId
+
+	if !isOwner && !common.IsAdmin(biz.requester) {
+		return common.ErrNoPermission(errors.New("you don't have permission to update this post"))
 	}
 
 	if err := biz.store.UpdatePost(ctx, map[string]interface{}{"id": id}, dataUpdate); err != nil {

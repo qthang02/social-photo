@@ -22,3 +22,7 @@ type Requester interface {
 	GetRole() string
 	GetEmail() string
 }
+
+func IsAdmin(requester Requester) bool {
+	return requester.GetRole() == "admin" || requester.GetRole() == "mod"
+}

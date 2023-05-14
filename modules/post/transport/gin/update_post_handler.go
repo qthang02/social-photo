@@ -29,8 +29,10 @@ func UpdatePost(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+
 		store := storage.NewSQLStore(db)
-		business := biz.NewUpdatePostBiz(store)
+		business := biz.NewUpdatePostBiz(store, requester)
 
 		if err := business.UpdatePostById(c.Request.Context(), id, &data); err != nil {
 			c.JSON(http.StatusBadGateway, err)

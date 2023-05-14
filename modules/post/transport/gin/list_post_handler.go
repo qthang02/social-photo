@@ -21,8 +21,10 @@ func ListPost(db *gorm.DB) func(*gin.Context) {
 
 		paging.Process()
 
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+
 		store := storage.NewSQLStore(db)
-		business := biz.NewListPostBiz(store)
+		business := biz.NewListPostBiz(store, requester)
 
 		data, err := business.ListPostBiz(c.Request.Context(), &paging)
 
