@@ -13,8 +13,8 @@ type jwtProvider struct {
 	secret string
 }
 
-func NewTokenProvider(prefix string) *jwtProvider {
-	return &jwtProvider{prefix: prefix}
+func NewTokenProvider(prefix string, secret string) *jwtProvider {
+	return &jwtProvider{prefix: prefix, secret: secret}
 }
 
 type myClaims struct {

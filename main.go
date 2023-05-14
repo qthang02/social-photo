@@ -25,6 +25,7 @@ func main() {
 	v1 := r.Group("/v1")
 	{
 		v1.POST("register", ginUser.Register(db))
+		v1.POST("login", ginUser.Login(db))
 
 		posts := v1.Group("/posts")
 		{
