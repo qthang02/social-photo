@@ -2,17 +2,26 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"social-photo/common"
 )
 
-func Recovery() func(*gin.Context) {
+func Recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
-			if r := recover(); r != nil {
-				if err, ok := r.(error); ok {
-					c.AbortWithStatusJSON(http.StatusInternalServerError, common.ErrInternal(err))
+			if err := recover(); err != nil {
+				c.Header("Content-Type", "application/json")
+
+				if appErr, ok := err.(*common.AppError); ok {
+					c.AbortWithStatusJSON(appErr.StatusCode, appErr)
+					//panic(err)
+					return
 				}
+
+				appErr := common.ErrInternal(err.(error))
+				c.AbortWithStatusJSON(appErr.StatusCode, appErr)
+				panic(err)
+
+				return
 			}
 		}()
 

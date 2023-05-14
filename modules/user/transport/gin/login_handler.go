@@ -5,13 +5,13 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"social-photo/common"
-	"social-photo/component/tokenprovider/jwt"
+	"social-photo/component/tokenprovider"
 	"social-photo/modules/user/biz"
 	"social-photo/modules/user/model"
 	"social-photo/modules/user/storage"
 )
 
-func Login(db *gorm.DB) func(*gin.Context) {
+func Login(db *gorm.DB, tokenProvider tokenprovider.Provider) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var data model.UserLogin
 
@@ -20,8 +20,6 @@ func Login(db *gorm.DB) func(*gin.Context) {
 
 			return
 		}
-
-		tokenProvider := jwt.NewTokenProvider("jwt", "secretKey")
 
 		store := storage.NewSQLStore(db)
 		md5 := common.NewMd5Hash()

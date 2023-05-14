@@ -39,6 +39,7 @@ func (biz *registerBusiness) Register(ctx context.Context, data *model.UserCreat
 	data.Password = biz.hasher.Hash(data.Password + salt)
 	data.Salt = salt
 	data.Role = "user"
+	data.Status = 1
 
 	if err := biz.registerStorage.CreateUser(ctx, data); err != nil {
 		return common.ErrCannotCreateEntity(model.EntityName, err)
