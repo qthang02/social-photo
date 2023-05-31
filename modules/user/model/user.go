@@ -62,14 +62,15 @@ func (role *UserRole) MarshalJSON() ([]byte, error) {
 
 type User struct {
 	common.SQLModel
-	Email     string   `json:"email" gorm:"column:email;"`
-	Password  string   `json:"-" gorm:"column:password;"`
-	Salt      string   `json:"-" gorm:"column:salt;"`
-	LastName  string   `json:"last_name" gorm:"column:last_name;"`
-	FirstName string   `json:"first_name" gorm:"column:first_name;"`
-	Phone     string   `json:"phone" gorm:"column:phone;"`
-	Role      UserRole `json:"role" gorm:"column:role;"`
-	Status    int      `json:"status" gorm:"column:status;"`
+	Email     string        `json:"email" gorm:"column:email;"`
+	Password  string        `json:"-" gorm:"column:password;"`
+	Salt      string        `json:"-" gorm:"column:salt;"`
+	LastName  string        `json:"last_name" gorm:"column:last_name;"`
+	FirstName string        `json:"first_name" gorm:"column:first_name;"`
+	Phone     string        `json:"phone" gorm:"column:phone;"`
+	Role      UserRole      `json:"role" gorm:"column:role;"`
+	Avatar    *common.Image `json:"avatar" gorm:"column:avatar;"`
+	Status    int           `json:"status" gorm:"column:status;"`
 }
 
 func (u *User) GetUserId() int {
@@ -90,13 +91,14 @@ func (User) TableName() string {
 
 type UserCreate struct {
 	common.SQLModel
-	Email     string `json:"email" gorm:"column:email;"`
-	Password  string `json:"password" gorm:"column:password;"`
-	LastName  string `json:"last_name" gorm:"column:last_name;"`
-	FirstName string `json:"first_name" gorm:"column:first_name;"`
-	Role      string `json:"-" gorm:"column:role;"`
-	Salt      string `json:"-" gorm:"column:salt;"`
-	Status    int    `json:"status" gorm:"column:status;"`
+	Email     string        `json:"email" gorm:"column:email;"`
+	Password  string        `json:"password" gorm:"column:password;"`
+	LastName  string        `json:"last_name" gorm:"column:last_name;"`
+	FirstName string        `json:"first_name" gorm:"column:first_name;"`
+	Role      string        `json:"-" gorm:"column:role;"`
+	Salt      string        `json:"-" gorm:"column:salt;"`
+	Status    int           `json:"status" gorm:"column:status;"`
+	Avatar    *common.Image `json:"avatar" gorm:"column:avatar;"`
 }
 
 func (UserCreate) TableName() string {

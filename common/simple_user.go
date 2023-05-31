@@ -1,0 +1,12 @@
+package common
+
+type SimpleUser struct {
+	SQLModel
+	LastName  string `json:"last_name" gorm:"column:last_name;"`
+	FirstName string `json:"first_name" gorm:"column:first_name;"`
+	Status    int    `json:"status" gorm:"column:status;"`
+}
+
+func (u *SimpleUser) TableName() string {
+	return "users"
+}

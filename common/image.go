@@ -16,10 +16,6 @@ type Image struct {
 	Extension string `json:"extension,omitempty" gorm:"-"`
 }
 
-func (Image) TableName() string {
-	return "images"
-}
-
 func (i *Image) Scan(value interface{}) error {
 	bytes, ok := value.([]byte)
 

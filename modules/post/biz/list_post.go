@@ -7,7 +7,7 @@ import (
 )
 
 type ListPostStorage interface {
-	ListPost(ctx context.Context, paging *common.Paging) ([]model.Post, error)
+	ListPost(ctx context.Context, paging *common.Paging, moreKey ...string) ([]model.Post, error)
 }
 
 type listPostBiz struct {
@@ -20,9 +20,7 @@ func NewListPostBiz(store ListPostStorage, requester common.Requester) *listPost
 }
 
 func (biz *listPostBiz) ListPostBiz(ctx context.Context, paging *common.Paging) ([]model.Post, error) {
-	ctxStore := context.WithValue(ctx, common.CurrentUser, biz.requester)
-
-	data, err := biz.store.ListPost(ctxStore, paging)
+	data, err := biz.store.ListPost(ctx, paging, "Owner")
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(model.EntityName, err)
