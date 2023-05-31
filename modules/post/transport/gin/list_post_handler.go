@@ -34,6 +34,10 @@ func ListPost(db *gorm.DB) func(*gin.Context) {
 			return
 		}
 
+		for i := range data {
+			data[i].Mask()
+		}
+
 		c.JSON(http.StatusOK, common.NewSuccessResponse(data, paging, nil))
 	}
 }

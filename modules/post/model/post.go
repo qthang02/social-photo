@@ -15,13 +15,21 @@ var (
 
 type Post struct {
 	common.SQLModel
-	UserId  int                `json:"user_id" gorm:"column:user_id;"`
+	UserId  int                `json:"-" gorm:"column:user_id;"`
 	Caption string             `json:"caption" gorm:"column:caption;"`
 	Image   *common.Images     `json:"image" gorm:"column:image;"`
 	Owner   *common.SimpleUser `json:"owner" gorm:"foreignKey:UserId;"`
 }
 
 func (Post) TableName() string { return "posts" }
+
+func (p *Post) Mask() {
+	p.SQLModel.Mask(common.DbTypePost)
+
+	if v := p.Owner; v != nil {
+		v.Mask()
+	}
+}
 
 type PostCreation struct {
 	Id      int            `json:"-" gorm:"column:id;"`

@@ -10,3 +10,7 @@ type SimpleUser struct {
 func (u *SimpleUser) TableName() string {
 	return "users"
 }
+
+func (u *SimpleUser) Mask() {
+	u.SQLModel.Mask(DbTypeUser)
+}
