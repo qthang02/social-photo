@@ -13,6 +13,7 @@ import (
 	ginUpload "social-photo/modules/upload/transport/gin"
 	"social-photo/modules/user/storage"
 	ginUser "social-photo/modules/user/transport/gin"
+	ginLikePost "social-photo/modules/userlikepost/transport/gin"
 )
 
 func main() {
@@ -59,6 +60,9 @@ func main() {
 			posts.POST("/", ginPost.CreatePost(db))
 			posts.PATCH("/:id", ginPost.UpdatePost(db))
 			posts.DELETE("/:id", ginPost.DeletePostById(db))
+
+			// like post
+			posts.POST("/:id/like", ginLikePost.LikePost(db))
 		}
 	}
 
