@@ -2,9 +2,13 @@ package storage
 
 import (
 	"context"
+	"github.com/btcsuite/btcutil/base58"
 	"social-photo/common"
 	"social-photo/modules/userlikepost/model"
+	"time"
 )
+
+const timeLayout = "2006-01-02T15:04:05.999999"
 
 func (s *sqlStore) ListUser(ctx context.Context, postId int, paging *common.Paging) ([]common.SimpleUser, error) {
 	var result []model.Like
@@ -15,9 +19,20 @@ func (s *sqlStore) ListUser(ctx context.Context, postId int, paging *common.Pagi
 		return nil, common.ErrDB(err)
 	}
 
+	if v := paging.FakeCursor; v != "" {
+		timeCreated, err := time.Parse(timeLayout, string(base58.Decode(v)))
+
+		if err != nil {
+			return nil, common.ErrDB(err)
+		}
+
+		db = db.Where("created_at < ?", timeCreated.Format("2006-01-02 15:04:05.999999"))
+	} else {
+		db = db.Offset((paging.Page - 1) * paging.Limit)
+	}
+
 	if err := db.Select("*").
 		Order("created_at desc").
-		Offset((paging.Page - 1) * paging.Limit).
 		Limit(paging.Limit).
 		Preload("User").
 		Find(&result).Error; err != nil {
@@ -31,6 +46,11 @@ func (s *sqlStore) ListUser(ctx context.Context, postId int, paging *common.Pagi
 		users[i] = *result[i].User
 		users[i].UpdatedAt = nil
 		users[i].CreatedAt = result[i].CreatedAt
+	}
+
+	if len(users) > 0 {
+		users[len(result)-1].Mask()
+		paging.NextCursor = base58.Encode([]byte(users[len(result)-1].CreatedAt.Format(timeLayout)))
 	}
 
 	return users, nil

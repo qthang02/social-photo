@@ -20,8 +20,25 @@ func (s *sqlStore) ListPost(ctx context.Context, paging *common.Paging, moreKey 
 		db = db.Preload(moreKey[i])
 	}
 
-	if err := db.Offset((paging.Page - 1) * paging.Limit).Limit(paging.Limit).Find(&data).Error; err != nil {
+	if v := paging.FakeCursor; v != "" {
+		uid, err := common.FromBase58(v)
+
+		if err != nil {
+			return nil, common.ErrDB(err)
+		}
+
+		db = db.Where("id < ?", uid.GetLocalID())
+	} else {
+		db = db.Offset((paging.Page - 1) * paging.Limit)
+	}
+
+	if err := db.Order("id desc").Limit(paging.Limit).Find(&data).Error; err != nil {
 		return nil, common.ErrDB(err)
+	}
+
+	if len(data) > 0 {
+		data[len(data)-1].Mask()
+		paging.NextCursor = data[len(data)-1].FakeId.String()
 	}
 
 	return data, nil
