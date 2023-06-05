@@ -64,6 +64,7 @@ func main() {
 			// like post
 			posts.POST("/:id/like", ginLikePost.LikePost(db))
 			posts.POST("/:id/unlike", ginLikePost.UnlikePost(db))
+			posts.GET("/:id/like", ginLikePost.ListUserLiked(db))
 		}
 	}
 
