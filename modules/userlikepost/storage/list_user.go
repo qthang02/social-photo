@@ -55,3 +55,26 @@ func (s *sqlStore) ListUser(ctx context.Context, postId int, paging *common.Pagi
 
 	return users, nil
 }
+
+func (s *sqlStore) GetItemLikes(ctx context.Context, ids []int) (map[int]int, error) {
+	result := make(map[int]int)
+
+	type sqlData struct {
+		PostId int `gorm:"column:post_id"`
+		Count  int `gorm:"column:count"`
+	}
+
+	var listLike []sqlData
+
+	if err := s.db.Table(model.Like{}.TableName()).Select("post_id, COUNT(post_id) as `count`").
+		Where("post_id in (?)", ids).
+		Group("post_id").Find(&listLike).Error; err != nil {
+		return nil, common.ErrDB(err)
+	}
+
+	for _, post := range listLike {
+		result[post.PostId] = post.Count
+	}
+
+	return result, nil
+}

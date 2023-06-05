@@ -15,10 +15,11 @@ var (
 
 type Post struct {
 	common.SQLModel
-	UserId  int                `json:"-" gorm:"column:user_id;"`
-	Caption string             `json:"caption" gorm:"column:caption;"`
-	Image   *common.Images     `json:"image" gorm:"column:image;"`
-	Owner   *common.SimpleUser `json:"owner" gorm:"foreignKey:UserId;"`
+	UserId    int                `json:"-" gorm:"column:user_id;"`
+	Caption   string             `json:"caption" gorm:"column:caption;"`
+	Image     *common.Images     `json:"image" gorm:"column:image;"`
+	LikeCount int                `json:"like_count" gorm:"-"`
+	Owner     *common.SimpleUser `json:"owner" gorm:"foreignKey:UserId;"`
 }
 
 func (Post) TableName() string { return "posts" }
