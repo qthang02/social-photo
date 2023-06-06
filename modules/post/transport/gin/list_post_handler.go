@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"social-photo/common"
 	"social-photo/modules/post/biz"
+	"social-photo/modules/post/repository"
 	"social-photo/modules/post/storage"
+	usrlikestore "social-photo/modules/userlikepost/storage"
 )
 
 func ListPost(db *gorm.DB) func(*gin.Context) {
@@ -24,7 +26,9 @@ func ListPost(db *gorm.DB) func(*gin.Context) {
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
 		store := storage.NewSQLStore(db)
-		business := biz.NewListPostBiz(store, requester)
+		likeStore := usrlikestore.NewSQLStore(db)
+		repo := repository.NewListPostRepo(store, likeStore, requester)
+		business := biz.NewListPostBiz(repo, requester)
 
 		data, err := business.ListPostBiz(c.Request.Context(), &paging)
 
