@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"social-photo/common"
+	postStorage "social-photo/modules/post/storage"
 	"social-photo/modules/userlikepost/biz"
 	"social-photo/modules/userlikepost/storage"
 )
@@ -19,7 +20,8 @@ func UnlikePost(db *gorm.DB) func(*gin.Context) {
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
 		store := storage.NewSQLStore(db)
-		business := biz.NewUserUnlikePostBiz(store)
+		postStore := postStorage.NewSQLStore(db)
+		business := biz.NewUserUnlikePostBiz(store, postStore)
 
 		if err := business.UnlikePost(c.Request.Context(), requester.GetUserId(), int(id.GetLocalID())); err != nil {
 			c.JSON(http.StatusInternalServerError, err)

@@ -47,7 +47,7 @@ func (repo *listPostRepo) ListPost(ctx context.Context, paging *common.Paging, m
 	}
 
 	for i := range data {
-		data[i].LikeCount = likeUserMap[data[i].Id]
+		data[i].LikedCount = likeUserMap[data[i].Id]
 	}
 
 	return data, nil
