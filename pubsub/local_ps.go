@@ -11,15 +11,13 @@ import (
 // Because we want to send a message with a specific topic for many subscribers in a group can handle.
 
 type localPubSub struct {
-	name         string
 	messageQueue chan *Message
 	mapChannel   map[Topic][]chan *Message
 	locker       *sync.RWMutex
 }
 
-func NewPubSub(name string) *localPubSub {
+func NewPubSub() *localPubSub {
 	pb := &localPubSub{
-		name:         name,
 		messageQueue: make(chan *Message, 10000),
 		mapChannel:   make(map[Topic][]chan *Message),
 		locker:       new(sync.RWMutex),

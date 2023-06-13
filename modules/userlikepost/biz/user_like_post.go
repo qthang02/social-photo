@@ -3,24 +3,31 @@ package biz
 import (
 	"context"
 	"log"
+	"social-photo/common"
 	"social-photo/modules/userlikepost/model"
+	"social-photo/pubsub"
 )
 
 type UserLikePostStore interface {
 	Create(ctx context.Context, data *model.Like) error
 }
 
-type IncreasePostStorage interface {
-	IncreaseLikeCount(ctx context.Context, id int) error
-}
+//type IncreasePostStorage interface {
+//	IncreaseLikeCount(ctx context.Context, id int) error
+//}
 
 type userLikePostBiz struct {
-	store     UserLikePostStore
-	postStore IncreasePostStorage
+	store UserLikePostStore
+	//postStore IncreasePostStorage
+	ps pubsub.PubSub
 }
 
-func NewUserLikePostBiz(store UserLikePostStore, postStorage IncreasePostStorage) *userLikePostBiz {
-	return &userLikePostBiz{store: store, postStore: postStorage}
+func NewUserLikePostBiz(store UserLikePostStore,
+	//postStorage IncreasePostStorage,
+	ps pubsub.PubSub) *userLikePostBiz {
+	return &userLikePostBiz{store: store,
+		//postStore: postStorage,
+		ps: ps}
 }
 
 func (biz *userLikePostBiz) LikePost(ctx context.Context, data *model.Like) error {
@@ -28,11 +35,15 @@ func (biz *userLikePostBiz) LikePost(ctx context.Context, data *model.Like) erro
 		return model.ErrCannotLikeItem(err)
 	}
 
-	go func() {
-		if err := biz.postStore.IncreaseLikeCount(ctx, data.PostId); err != nil {
-			log.Fatalln("IncreaseLikeCount", err)
-		}
-	}()
+	//go func() {
+	//	if err := biz.postStore.IncreaseLikeCount(ctx, data.PostId); err != nil {
+	//		log.Fatalln("IncreaseLikeCount", err)
+	//	}
+	//}()
+
+	if err := biz.ps.Publish(ctx, common.TopicUserLikedPost, pubsub.NewMessage(data)); err != nil {
+		log.Println(err)
+	}
 
 	return nil
 }

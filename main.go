@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -14,6 +15,8 @@ import (
 	"social-photo/modules/user/storage"
 	ginUser "social-photo/modules/user/transport/gin"
 	ginLikePost "social-photo/modules/userlikepost/transport/gin"
+	"social-photo/pubsub"
+	"social-photo/subscriber"
 )
 
 func main() {
@@ -41,6 +44,10 @@ func main() {
 	r := gin.Default()
 	r.Use(middleware.Recovery())
 
+	// pub/sub
+	pb := pubsub.NewPubSub()
+	subscriber.IncreaseLikeCount(context.Background(), db, pb)
+
 	v1 := r.Group("/v1")
 	{
 
@@ -62,7 +69,7 @@ func main() {
 			posts.DELETE("/:id", ginPost.DeletePostById(db))
 
 			// like post
-			posts.POST("/:id/like", ginLikePost.LikePost(db))
+			posts.POST("/:id/like", ginLikePost.LikePost(db, pb))
 			posts.POST("/:id/unlike", ginLikePost.UnlikePost(db))
 			posts.GET("/:id/like", ginLikePost.ListUserLiked(db))
 		}

@@ -9,6 +9,8 @@ type DbType int
 const (
 	DbTypePost DbType = 1
 	DbTypeUser DbType = 2
+
+	TopicUserLikedPost = "TopicUserLikedPost"
 )
 
 type TokenPayload struct {

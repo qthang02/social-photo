@@ -19,6 +19,9 @@ type Like struct {
 
 func (Like) TableName() string { return "user_like_posts" }
 
+func (l *Like) GetItemId() int { return l.PostId }
+func (l *Like) GetUserId() int { return l.UserId }
+
 func ErrCannotLikeItem(err error) *common.AppError {
 	return common.NewCustomError(
 		err,

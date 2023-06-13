@@ -5,14 +5,14 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"social-photo/common"
-	postStorage "social-photo/modules/post/storage"
 	"social-photo/modules/userlikepost/biz"
 	"social-photo/modules/userlikepost/model"
 	"social-photo/modules/userlikepost/storage"
+	"social-photo/pubsub"
 	"time"
 )
 
-func LikePost(db *gorm.DB) func(*gin.Context) {
+func LikePost(db *gorm.DB, ps pubsub.PubSub) func(*gin.Context) {
 	return func(c *gin.Context) {
 		id, err := common.FromBase58(c.Param("id"))
 		if err != nil {
@@ -23,8 +23,8 @@ func LikePost(db *gorm.DB) func(*gin.Context) {
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
 		store := storage.NewSQLStore(db)
-		postStore := postStorage.NewSQLStore(db)
-		business := biz.NewUserLikePostBiz(store, postStore)
+		//postStore := postStorage.NewSQLStore(db)
+		business := biz.NewUserLikePostBiz(store, ps)
 
 		now := time.Now().UTC()
 
