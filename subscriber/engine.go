@@ -28,6 +28,10 @@ func (engine *pbEngine) Start() error {
 		IncreaseLikeCount(engine.db),
 	)
 
+	engine.startSubTopic(common.TopicUserUnlikedPost, true,
+		DecreaseLikeCount(engine.db),
+	)
+
 	return nil
 }
 

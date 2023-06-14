@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -47,8 +46,6 @@ func main() {
 	// pub/sub
 	ps := pubsub.NewPubSub()
 	_ = subscriber.NewEngine(db, ps).Start()
-	//subscriber.IncreaseLikeCount(context.Background(), db, ps)
-	subscriber.DecreaseLikeCount(context.Background(), db, ps)
 
 	v1 := r.Group("/v1")
 	{
