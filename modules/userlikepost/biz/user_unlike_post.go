@@ -38,7 +38,7 @@ func (biz *userUnlikePostBiz) UnlikePost(ctx context.Context, userId, postId int
 		return model.ErrCannotUnlikeItem(err)
 	}
 
-	if err := biz.ps.Publish(ctx, common.TopicUserUnlikedPost, pubsub.NewMessage(postId)); err != nil {
+	if err := biz.ps.Publish(ctx, common.TopicUserUnlikedPost, pubsub.NewMessage(&model.Like{UserId: userId, PostId: postId})); err != nil {
 		log.Println(err)
 	}
 
