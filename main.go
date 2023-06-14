@@ -46,7 +46,8 @@ func main() {
 
 	// pub/sub
 	ps := pubsub.NewPubSub()
-	subscriber.IncreaseLikeCount(context.Background(), db, ps)
+	_ = subscriber.NewEngine(db, ps).Start()
+	//subscriber.IncreaseLikeCount(context.Background(), db, ps)
 	subscriber.DecreaseLikeCount(context.Background(), db, ps)
 
 	v1 := r.Group("/v1")

@@ -4,6 +4,7 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"log"
+	"social-photo/common"
 	"social-photo/common/asyncjob"
 	"social-photo/pubsub"
 )
@@ -23,6 +24,10 @@ func NewEngine(db *gorm.DB, ps pubsub.PubSub) *pbEngine {
 }
 
 func (engine *pbEngine) Start() error {
+	engine.startSubTopic(common.TopicUserLikedPost, true,
+		IncreaseLikeCount(engine.db),
+	)
+
 	return nil
 }
 
