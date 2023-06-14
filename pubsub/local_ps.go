@@ -3,6 +3,7 @@ package pubsub
 import (
 	"context"
 	"log"
+	"social-photo/common"
 	"sync"
 )
 
@@ -32,7 +33,7 @@ func (ps *localPubSub) Publish(ctx context.Context, topic Topic, data *Message) 
 	data.SetChannel(topic)
 
 	go func() {
-		// defer common.Recovery()
+		defer common.Recovery()
 		ps.messageQueue <- data
 		log.Println("New message published:", data.String())
 	}()

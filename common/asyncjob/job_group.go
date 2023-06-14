@@ -3,6 +3,7 @@ package asyncjob
 import (
 	"context"
 	"log"
+	"social-photo/common"
 	"sync"
 )
 
@@ -30,7 +31,7 @@ func (g *group) Run(ctx context.Context) error {
 	for i := range g.jobs {
 		if g.isConcurrent {
 			go func(aj Job) {
-				//defer common.Recovery()
+				defer common.Recovery()
 
 				errChan <- g.runJob(ctx, aj)
 				g.wg.Done()

@@ -1,5 +1,7 @@
 package common
 
+import "fmt"
+
 const (
 	CurrentUser = "current_user"
 )
@@ -13,6 +15,12 @@ const (
 	TopicUserLikedPost   = "TopicUserLikedPost"
 	TopicUserUnlikedPost = "TopicUserUnlikedPost"
 )
+
+func Recovery() {
+	if r := recover(); r != nil {
+		fmt.Println("Recovered:", r)
+	}
+}
 
 type TokenPayload struct {
 	UId   int    `json:"user_id"`
