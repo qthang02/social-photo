@@ -10,7 +10,8 @@ const (
 	DbTypePost DbType = 1
 	DbTypeUser DbType = 2
 
-	TopicUserLikedPost = "TopicUserLikedPost"
+	TopicUserLikedPost   = "TopicUserLikedPost"
+	TopicUserUnlikedPost = "TopicUserUnlikedPost"
 )
 
 type TokenPayload struct {

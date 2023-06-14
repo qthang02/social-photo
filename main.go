@@ -45,8 +45,9 @@ func main() {
 	r.Use(middleware.Recovery())
 
 	// pub/sub
-	pb := pubsub.NewPubSub()
-	subscriber.IncreaseLikeCount(context.Background(), db, pb)
+	ps := pubsub.NewPubSub()
+	subscriber.IncreaseLikeCount(context.Background(), db, ps)
+	subscriber.DecreaseLikeCount(context.Background(), db, ps)
 
 	v1 := r.Group("/v1")
 	{
@@ -69,8 +70,8 @@ func main() {
 			posts.DELETE("/:id", ginPost.DeletePostById(db))
 
 			// like post
-			posts.POST("/:id/like", ginLikePost.LikePost(db, pb))
-			posts.POST("/:id/unlike", ginLikePost.UnlikePost(db))
+			posts.POST("/:id/like", ginLikePost.LikePost(db, ps))
+			posts.POST("/:id/unlike", ginLikePost.UnlikePost(db, ps))
 			posts.GET("/:id/like", ginLikePost.ListUserLiked(db))
 		}
 	}

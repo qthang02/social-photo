@@ -23,7 +23,6 @@ func LikePost(db *gorm.DB, ps pubsub.PubSub) func(*gin.Context) {
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
 		store := storage.NewSQLStore(db)
-		//postStore := postStorage.NewSQLStore(db)
 		business := biz.NewUserLikePostBiz(store, ps)
 
 		now := time.Now().UTC()

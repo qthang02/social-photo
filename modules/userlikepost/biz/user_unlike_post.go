@@ -5,6 +5,7 @@ import (
 	"log"
 	"social-photo/common"
 	"social-photo/modules/userlikepost/model"
+	"social-photo/pubsub"
 )
 
 type UserUnlikePostStore interface {
@@ -12,17 +13,13 @@ type UserUnlikePostStore interface {
 	Delete(ctx context.Context, userId, postId int) error
 }
 
-type DecreasePostStorage interface {
-	DecreaseLikeCount(ctx context.Context, id int) error
-}
-
 type userUnlikePostBiz struct {
-	store     UserUnlikePostStore
-	postStore DecreasePostStorage
+	store UserUnlikePostStore
+	ps    pubsub.PubSub
 }
 
-func NewUserUnlikePostBiz(store UserUnlikePostStore, postStorage DecreasePostStorage) *userUnlikePostBiz {
-	return &userUnlikePostBiz{store: store, postStore: postStorage}
+func NewUserUnlikePostBiz(store UserUnlikePostStore, ps pubsub.PubSub) *userUnlikePostBiz {
+	return &userUnlikePostBiz{store: store, ps: ps}
 }
 
 func (biz *userUnlikePostBiz) UnlikePost(ctx context.Context, userId, postId int) error {
@@ -41,11 +38,9 @@ func (biz *userUnlikePostBiz) UnlikePost(ctx context.Context, userId, postId int
 		return model.ErrCannotUnlikeItem(err)
 	}
 
-	go func() {
-		if err := biz.postStore.DecreaseLikeCount(ctx, postId); err != nil {
-			log.Fatalln("DecreaseLikeCount", err)
-		}
-	}()
+	if err := biz.ps.Publish(ctx, common.TopicUserUnlikedPost, pubsub.NewMessage(postId)); err != nil {
+		log.Println(err)
+	}
 
 	return nil
 }
