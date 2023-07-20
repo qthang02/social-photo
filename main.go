@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
+	"social-photo/common"
 	"social-photo/component/tokenprovider/jwt"
 	"social-photo/component/uploadprovider"
 	"social-photo/middleware"
@@ -19,16 +20,21 @@ import (
 )
 
 func main() {
-	dsn := os.Getenv("DB_CONN_STR")
+	config, err := common.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config:")
+	}
+
+	dsn := os.Getenv(config.DB_CONN_STR)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	secretKey := os.Getenv("SECRET_KEY")
+	secretKey := os.Getenv(config.JWT_SECRET_KEY)
 
 	// S3_Provider
-	s3BucketName := os.Getenv("S3BucketName")
-	s3Region := os.Getenv("S3Region")
-	s3APIKey := os.Getenv("S3APIKey")
-	s3SecretKey := os.Getenv("S3SecretKey")
-	s3Domain := os.Getenv("S3Domain")
+	s3BucketName := os.Getenv(config.S3BucketName)
+	s3Region := os.Getenv(config.S3Region)
+	s3APIKey := os.Getenv(config.S3APIKey)
+	s3SecretKey := os.Getenv(config.S3APISecret)
+	s3Domain := os.Getenv(config.S3Domain)
 
 	s3Provider := uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
 
@@ -40,6 +46,7 @@ func main() {
 	tokenProvider := jwt.NewTokenProvider("jwt", secretKey)
 	middlewareAuth := middleware.RequiredAuth(authStore, tokenProvider)
 
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(middleware.Recovery())
 
@@ -59,18 +66,18 @@ func main() {
 		v1.GET("/profile", middlewareAuth, ginUser.Profile())
 
 		// post
-		posts := v1.Group("/posts", middlewareAuth)
+		posts := v1.Group("/posts")
 		{
 			posts.GET("/", ginPost.ListPost(db))
 			posts.GET("/:id", ginPost.GetPostById(db))
-			posts.POST("/", ginPost.CreatePost(db))
-			posts.PATCH("/:id", ginPost.UpdatePost(db))
-			posts.DELETE("/:id", ginPost.DeletePostById(db))
+			posts.POST("/", middlewareAuth, ginPost.CreatePost(db))
+			posts.PATCH("/:id", middlewareAuth, ginPost.UpdatePost(db))
+			posts.DELETE("/:id", middlewareAuth, ginPost.DeletePostById(db))
 
 			// like post
-			posts.POST("/:id/like", ginLikePost.LikePost(db, ps))
-			posts.POST("/:id/unlike", ginLikePost.UnlikePost(db, ps))
-			posts.GET("/:id/like", ginLikePost.ListUserLiked(db))
+			posts.POST("/:id/like", middlewareAuth, ginLikePost.LikePost(db, ps))
+			posts.POST("/:id/unlike", middlewareAuth, ginLikePost.UnlikePost(db, ps))
+			posts.GET("/:id/like", middlewareAuth, ginLikePost.ListUserLiked(db))
 		}
 	}
 
