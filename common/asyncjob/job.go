@@ -89,10 +89,6 @@ func (j *job) Execute(ctx context.Context) error {
 }
 
 func (j *job) Retry(ctx context.Context) error {
-	if j.retryIndex == len(j.config.Retries)-1 {
-		return nil
-	}
-
 	j.retryIndex += 1
 	time.Sleep(j.config.Retries[j.retryIndex])
 

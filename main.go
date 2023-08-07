@@ -46,7 +46,6 @@ func main() {
 	tokenProvider := jwt.NewTokenProvider("jwt", secretKey)
 	middlewareAuth := middleware.RequiredAuth(authStore, tokenProvider)
 
-	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(middleware.Recovery())
 

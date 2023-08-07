@@ -24,7 +24,10 @@ func NewPubSub() *localPubSub {
 		locker:       new(sync.RWMutex),
 	}
 
-	pb.run()
+	err := pb.run()
+	if err != nil {
+		return nil
+	}
 
 	return pb
 }
@@ -83,7 +86,7 @@ func (ps *localPubSub) Subscribe(ctx context.Context, topic Topic) (ch <-chan *M
 
 func (ps *localPubSub) run() error {
 	go func() {
-		// defer common.Recovery()
+		defer common.Recovery()
 		for {
 			mess := <-ps.messageQueue
 			log.Println("Message dequeue:", mess.String())
@@ -93,17 +96,13 @@ func (ps *localPubSub) run() error {
 			if subs, ok := ps.mapChannel[mess.Channel()]; ok {
 				for i := range subs {
 					go func(c chan *Message) {
-						// defer common.Recovery()
+						defer common.Recovery()
 						c <- mess
-						//f(mess)
 					}(subs[i])
 				}
 			}
 
 			ps.locker.RUnlock()
-			//else {
-			//	ps.messageQueue <- mess
-			//}
 		}
 	}()
 
